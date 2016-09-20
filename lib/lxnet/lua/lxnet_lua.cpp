@@ -237,11 +237,18 @@ extern "C" LUA_API int luaopen_lxnet_lib(lua_State *L)
 {  
     //luaL_newlib(L, test_lib); // 5.2  
     binder.SetState(L);
+    
     binder.init("lxnet",lxnet_lib);
     binder.init("Listener",lxnet_listener_lib);
     binder.init("Socketer",lxnet_socketer_lib);
     //luaL_register(L, "lxnet",lxnet_lib); // lua 5.1  
     //luaL_register(L, "Listener",lxnet_listener_lib);
+    lua_getfield(L,LUA_GLOBALSINDEX,"lxnet");
+    lua_getfield(L,LUA_GLOBALSINDEX,"Listener");
+    lua_setfield(L,-2,"Listener");
+    lua_getfield(L,LUA_GLOBALSINDEX,"Socketer");
+    lua_setfield(L,-2,"Socketer");
+
     return 1;  
 }  
 
