@@ -35,14 +35,13 @@ static int net_run(lua_State *L)
     return 0;
 }
 
-static int GetHostIPByName(lua_State *L)
+static int net_wait(lua_State *L)
 {
-    static char buff[25];
-    const char* host_name = binder.checkstring(1);
-    lxnet::GetHostIPByName(host_name,buff,25);
-    binder.pushstring(buff);
-    return 1;
+    double time = binder.checknumber(1);
+    usleep(time*1000.0);
+    return 0;
 }
+
 
 
 
@@ -50,7 +49,7 @@ static const struct luaL_Reg lxnet_lib[] = {
     {"net_init",net_init},
     {"net_release",net_release},
     {"net_run",net_run},
-    {"GetHostIPByName",GetHostIPByName},
+    {"net_wait",net_wait},
     {NULL, NULL}
 };
 //------------------------------------------------------------------------
