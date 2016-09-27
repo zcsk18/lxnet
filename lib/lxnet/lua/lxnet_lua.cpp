@@ -179,6 +179,16 @@ static int sock_SendData(lua_State *L)
     return 1;
 }
 
+static int sock_SendNumber(lua_State *L)
+{
+    lxnet::Socketer* sock = (lxnet::Socketer*)binder.checkusertype(1,"Socketer");
+    double number = binder.checknumber(2);
+    bool ret = sock->SendData((char*)&number,sizeof(number));
+    binder.pushbool(ret);
+    return 1;
+}
+
+
 static int sock_GetData(lua_State *L)
 {
     lxnet::Socketer* sock = (lxnet::Socketer*)binder.checkusertype(1,"Socketer");
@@ -199,6 +209,26 @@ static int sock_GetData(lua_State *L)
     }
     return 2;
 }
+
+static int sock_GetNumber(lua_State *L)
+{
+    lxnet::Socketer* sock = (lxnet::Socketer*)binder.checkusertype(1,"Socketer");
+    static double number;
+    static int len;
+    if(sock->GetRecvBufferByteSize()>0)
+    {
+        sock->GetData((char*)&number,sizeof(double),&len);
+        binder.pushnumber(number);
+        binder.pushnumber(sizeof(double));
+    }
+    else
+    {
+        binder.pushnumber(0);
+        binder.pushnumber(0);
+    }
+    return 2;
+}
+
 
 static int sock_CheckSend(lua_State *L)
 {
@@ -223,7 +253,9 @@ static const struct luaL_Reg lxnet_socketer_lib[] = {
     {"IsClose",sock_IsClose},
     {"GetIP",sock_GetIP},
     {"SendData",sock_SendData},
+    {"SendNumber",sock_SendNumber},
     {"GetData",sock_GetData},
+    {"GetNumber",sock_GetNumber},
     {"CheckSend",sock_CheckSend},
     {"CheckRecv",sock_CheckRecv},
     {NULL, NULL}
